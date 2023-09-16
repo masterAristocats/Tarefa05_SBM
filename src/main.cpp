@@ -82,8 +82,6 @@ void setup(void)
   TIMSK0 = 0x01; //habilita a interrupcao do timer 0
   TCCR1A = 0b10100011;
   TCCR1B = 0b00001010; //PWM fast mode de 10 bits comprescaler de 8
-  PCICR = 0x01; //00000010
-  PCMSK1 = (1<<PC0); //habilito a interrupcao na porta PC0
   adc_maq();
   sei(); //habilta a chave geral de interrupcao
 }
@@ -95,7 +93,6 @@ void loop(void)
 void f_timers(void)
 {
   static uint16_t counter0 = 1, counter1 = 1, counter2 = 1, counter3 = 1;
-  static uint8_t i = 0;
 
   if(counter0 < 200)
   {
@@ -105,10 +102,10 @@ void f_timers(void)
   else
   {
 
-    display4 = AD[i]/1000;
-    display3 = (AD[i]%1000)/100;
-    display2 = (AD[i]%100)/10;
-    display1 = AD[i]%10;
+    display4 = AD[0]/1000;
+    display3 = (AD[0]%1000)/100;
+    display2 = (AD[0]%100)/10;
+    display1 = AD[0]%10;
     
     counter0 = 1;
   }
@@ -131,7 +128,7 @@ void f_timers(void)
 
   else
   {
-    timer_pwm = AD[i] * 200 / 1023;
+    timer_pwm = AD[1] * 200 / 1023;
     counter2 = 1;
   }
 
@@ -140,7 +137,9 @@ void f_timers(void)
     counter3++;
   }
 
-  else {
+  else 
+  {
+    read_keyb();
     if(pwm_on) cpwm();
     counter3 = 1;
   }
